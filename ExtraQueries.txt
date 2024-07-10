@@ -109,7 +109,7 @@ from
 where
 	C.ID = CMAX.Coach_ID;
 
--- Question 4 A
+-- Checkpoint 3 Question 4 A
 select
 	t.Name,
 	tss.Team_ID,
@@ -123,7 +123,7 @@ where
 order by
 	tss.Touchdowns desc;
 
--- Question 4 B
+-- Checkpoint 3 Question 4 B
 select
 	PY.Player_ID,
 	P.Name,
@@ -137,7 +137,7 @@ where
 group by
 	PY.Player_ID;
 
--- Question 4 C
+-- Checkpoint 3 Question 4 C
 select
 	P.ID,
 	P.Name,

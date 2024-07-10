@@ -1,0 +1,98 @@
+-- Question 4 A
+select
+	P.Name,
+	SUM(PSS.Touchdowns)
+from
+	PLAYER_SEASON_STATS as PSS
+join
+	PLAYER as P on PSS.Player_ID = P.ID
+group by P.ID;
+
+-- Question 4 B
+select 
+	P.Name,
+	P.ID,
+	SUM(PS.Touchdowns)
+from 
+	PLAYER_SEASON_STATS as PS,
+	(select AVG(SUMEDTDS.SUMTDS) as AVGTDS
+	from
+		(select Player_ID, SUM(PSS.Touchdowns) as SUMTDS
+		from PLAYER_SEASON_STATS as PSS
+		group by PSS.Player_ID) as SUMEDTDS) as AVGEDTDS
+join
+	PLAYER as P on P.ID = PS.Player_ID
+group by
+	PS.Player_ID
+having SUM(PS.Touchdowns) > AVGEDTDS.AVGTDS;
+
+-- Question 4 C
+select 
+	T.Name,
+	SUMEDTDS.SUMTDS
+from 
+	(select TS.Team_ID, SUM(TS.Touchdowns) as SUMTDS
+	from TEAM_SEASON_STATS as TS
+	group by TS.Team_ID) as SUMEDTDS,
+	(select GS.Team_ID, SUM(GS.Points) as SUMPOINT
+	from TEAM_GAME_STATS as GS
+	group by GS.Team_ID) as SUMEDPOINTS,
+	Team as T
+where
+	T.ID = SUMEDTDS.Team_ID
+	and T.ID = SUMEDPOINTS.Team_ID
+order by SUMEDPOINTS.SUMPOINT desc;
+
+-- Question 4 D
+select
+	T.Name
+from 
+	TEAM_YEAR as TY
+join
+	COACH_SEASON_STAT as CSS on TY.Coach_ID = CSS.Coach_ID and TY.Year = CSS.Year,
+	TEAM as T on T.ID = TY.Team_ID
+group by T.ID
+order by SUM(CSS.Wins);
+
+-- Question 4 E
+select 
+	P.Name
+from
+	PLAYER_YEAR as PY
+join
+	PLAYER as P on PY.Player_ID = P.ID,
+	TEAM_YEAR as TY on TY.Team_ID = PY.Team_ID and TY.Year = PY.Year,
+	COACH_SEASON_STAT as CSS on CSS.Coach_ID = TY.Coach_ID and CSS.Year = TY.Year
+group by P.ID
+order by SUM(CSS.Wins) desc
+limit 1;
+
+-- Question 4 F
+select
+	P.Name
+from
+	PLAYER as P
+join
+	PLAYER_SEASON_STATS as PSS on P.ID = PSS.Player_ID
+group by P.ID
+order by SUM(PSS.Touchdowns) desc
+limit 5;
+
+-- Question 4 E
+select
+	AVG(PY.Age),
+	AVG(PY.Height),
+	AVG(PY.Weight)
+from PLAYER_YEAR as PY
+group by PY.Team_ID, PY.Year;
+
+-- Question 4 H
+select 
+	distinct T.Name
+from
+	PLAYER_SEASON_STATS as PSS
+join
+	PLAYER_YEAR as PY on PSS.Player_ID = PY.Player_ID and PSS.Year = PY.Year,
+	TEAM as T on T.ID = PY.Team_ID
+where
+	PSS.TOT > 20;
